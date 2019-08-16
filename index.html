@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Icon Font Preview</title>
+  <style>
+  /*全局设置*/
+  body::-webkit-scrollbar { display: none}
+  p {
+    margin: 0;
+  }
+  [v-cloak] {
+    display: none;
+  }
+  #app {
+    text-align: center;
+    padding: 10px 50px;
+  }
+  .p-action {
+    margin: 20px auto;
+    max-width: 1100px;
+    width: 100%;
+    font-size: 35px;
+    text-align: center;
+    font-weight: bold;
+  }
+  .p-reset {
+    position: absolute;
+    top: 38px;
+    right: 100px;
+    padding: 8px 20px;
+    font-size: 20px;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    border: 1px solid #aaaaaa;
+    background-color: #3D8AC7;
+    opacity: 1;
+    transition: 0.3s all;
+  }
+  .p-reset:hover {
+    opacity: 0.9;
+  }
+  .p-github {
+    position: fixed;
+    right: 50px;
+    bottom: 50px;
+    background-color: #eff3f6;
+    background-image: linear-gradient(-180deg, #fafbfc, #eff3f6 90%);
+    color: #24292e;
+    border: 1px solid rgba(27, 31, 35, .2);
+    border-radius: 3px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    padding: 6px 12px;
+  }
+  .p-github:hover {
+    opacity: 0.9;
+  }
+  /*字体文件载入*/
+  .p-input-container {
+    display: flex;
+    padding-top: 50px;
+  }
+  .p-input-container .line {
+    vertical-align: top;
+    width: 5px;
+    height: 400px;
+    transform-origin: top;
+    background-repeat: repeat;
+    background-image: url(http://www.luckly-mjw.cn/baseSource/icon-dotted-y.png);
+  }
+  .p-input-container .url-box, .file-box {
+    height: 300px;
+    flex: 1;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  .p-input-container .url-box input {
+    margin-bottom: 30px;
+    display: block;
+    width: 280px;
+    padding: 10px;
+    font-size: 24px;
+    border-radius: 4px;
+    box-shadow: none;
+    color: #444444;
+    border: 1px solid #cccccc;
+  }
+  .p-input-container .input-box, .url-box div {
+    position: relative;
+    display: inline-block;
+    height: 50px;
+    padding: 10px 30px;
+    font-size: 30px;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    border: 1px solid #aaaaaa;
+    background-color: #3D8AC7;
+    opacity: 1;
+    transition: 0.3s all;
+  }
+  .p-input-container .input-box:hover, .url-box div:hover {
+    opacity: 0.9;
+  }
+  .p-input-container .input-box input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .p-input-container .url-box div {
+    width: 240px;
+  }
+  /*icon 列表样式*/
+  .p-icon-item {
+    margin: 6px;
+    padding: 10px 6px;
+    display: inline-block;
+    text-align: center;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid #dddddd;
+    overflow: hidden;
+    box-sizing: border-box;
+    background-color: #FCFCFC;
+    transition-duration: .4s;
+    transition-property: background, box-shadow;
+  }
+  .p-icon-item:hover {
+    background: #ffffff;
+    border-color: transparent;
+    box-shadow: 0 5px 18px 0 rgba(0, 0, 0, 0.3);
+  }
+  .p-icon-item .iconfont {
+    margin: 0 20px;
+    padding: 6px;
+    border-radius: 4px;
+    font-size: 28px;
+  }
+  .p-icon-item .name {
+    font-size: 12px;
+    font-weight: bold;
+  }
+  .p-icon-item .value {
+    font-size: 12px;
+    font-weight: bold;
+  }
+  .p-icon-item svg {
+    width: 36px;
+    height: 36px;
+  }
+  </style>
+</head>
+<body>
+<section id="app" v-cloak>
+  <!--顶部操作提示-->
+  <section class="p-action g-box">{{tips}}</section>
+  <div v-if="iconList.length > 0" class="p-reset" @click="reload">重新载入</div>
+  <a class="p-github" href="https://github.com/Momo707577045/iconFontPreview">github</a>
+  <!--文件载入-->
+  <section class="p-input-container" v-if="iconList.length === 0">
+    <div class="url-box">
+      <input type="text" v-model="url" accept=".ttf" placeholder="在线 ttf、css 或 js 链接">
+      <div class="" @click="getURLFile">预览</div>
+    </div>
+    <div class="line"></div>
+    <div class="file-box">
+      <div class="input-box" v-if="iconList.length === 0">
+        解析本地 ttf 文件
+        <input type="file" @change="getLocalTTF" accept=".ttf">
+      </div>
+    </div>
+  </section>
+  <!--icon 展示-->
+  <section v-else>
+    <div v-for="item in iconList" class="p-icon-item" @click="copyToClipboard(item.value)">
+      <!--iconexchange-->
+      <svg v-if="isSymbol" class="icon" aria-hidden="true" v-html="`<use xlink:href='${item.value}'></use>`"></svg>
+      <p v-else class="iconfont" v-html="isCSS ? '' : item.value" :class="isCSS ? item.name : '' "></p>
+      <p class="name">{{item.name}}</p>
+      <p class="value">{{item.value}}</p>
+    </div>
+  </section>
+</section>
+</body>
+<!--ttf文件解析库-->
+<script src="https://cdn.jsdelivr.net/npm/opentype.js@latest/dist/opentype.min.js"></script>
+<!--vue 前端框架-->
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script>
+
+new Vue({
+  el: '#app',
+
+  data() {
+    return {
+      url: '', // 在线链接
+      tips: '请选择字体文件源', // 顶部提示
+      timeouter: 0, // 操作提示计时器
+      isSymbol: false, // 是否 symbol 模式
+      isCSS: false, // 是否 css 文件链接
+      iconList: [], // icon 列表
+    }
+  },
+
+  methods: {
+
+    // ajax 请求
+    ajax(options) {
+      options = options || {};
+      let xhr = new XMLHttpRequest();
+      if (options.type === 'buffer') {
+        xhr.responseType = 'arraybuffer';
+      }
+
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          let status = xhr.status;
+          if (status >= 200 && status < 300) {
+            console.log(xhr)
+            options.success && options.success(xhr.response);
+          } else {
+            options.fail && options.fail(status);
+          }
+        }
+      };
+
+      xhr.open("GET", options.url, true);
+      xhr.send(null);
+    },
+
+    // 获取在线文件
+    getURLFile() {
+      if (!this.url) {
+        alert('请输入链接')
+        return
+      }
+
+      if (this.url.toLowerCase().indexOf('.ttf') !== -1) {
+        this.getOnlineTTF()
+      } else if (this.url.toLowerCase().indexOf('.css') !== -1) {
+        this.getOnlineCSS()
+      } else if (this.url.toLowerCase().indexOf('.js') !== -1) {
+        this.getOnlineJS()
+      }
+
+    },
+
+    // 解析本地 ttf 文件
+    getLocalTTF(event) {
+      // 解析文件内容
+      let file = event.target.files[0]
+      let reader = new FileReader();
+      reader.readAsArrayBuffer(file);
+      reader.onload = (evt) => { this.parseIcon(evt.target.result); }
+
+      // base64 编码，动态加入 @font-face
+      let readerBase64 = new FileReader();
+      readerBase64.readAsDataURL(file)
+      readerBase64.onload = (evt) => { this.setStyle(evt.target.result) }
+
+    },
+
+    // 解析在线 ttf 文件
+    getOnlineTTF() {
+      // 远程获取文件
+      this.ajax({
+        url: this.url,
+        type: 'buffer',
+        success: (params) => { this.parseIcon(params) }
+      })
+
+      this.setStyle(this.url)
+    },
+
+    // 解析 CSS 文件
+    getOnlineCSS() {
+      // 远程获取文件
+      this.isCSS = true;
+      this.ajax({
+        url: this.url,
+        success: (params) => {
+          this.setStyle('', params)
+          params.replace(/\.([^:^ ]+):[\s\S]+?content: "\\([^"]+)";/gi, (...item) => {
+            this.iconList.push({
+              name: item[1],
+              value: `&#${item[2]};`,
+            })
+          })
+        }
+      })
+    },
+
+    // 解析 JS 文件
+    getOnlineJS() {
+      // 远程获取文件
+      this.isSymbol = true;
+      this.ajax({
+        url: this.url,
+        success: (params) => {
+          let $script = document.createElement('script')
+          $script.src = this.url
+          document.body.append($script);
+          console.log(params)
+
+          //id="iconexchange"
+          params.replace(/id="([^"]+)"/gi, (...item) => {
+            this.iconList.push({
+              name: item[1].replace(/icon/, ''),
+              value: `#${item[1]}`,
+            })
+          })
+        }
+      })
+    },
+
+    // 解析icon
+    parseIcon(bufferStr) {
+      let result = window.opentype.parse(bufferStr);
+      for (let key in result.glyphs.glyphs) {
+        let item = result.glyphs.glyphs[key]
+        item.unicode && this.iconList.push({
+          name: item.name,
+          value: `&#${item.unicode};`
+        })
+      }
+      this.tips = '点击复制icon代码'
+    },
+
+    // 添加style
+    setStyle(url, cssFile) {
+      let $style = document.createElement('style')
+      if (cssFile) {
+        $style.innerHTML = cssFile
+      } else {
+        $style.innerHTML = `
+        @font-face {
+  font-family: 'iconfont';
+  src: url('${url}') format('truetype');
+}
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 24px;font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-stroke-width: 0.2px;
+  -moz-osx-font-smoothing: grayscale;
+}`;
+      }
+
+      document.body.append($style);
+    },
+
+    // 拷贝剪切板
+    copyToClipboard(content) {
+      clearTimeout(this.timeouter)
+      this.tips = `复制成功: ${content}`
+      this.timeouter = setTimeout(() => {this.tips = `点击复制icon代码`}, 1000)
+
+      if (!document.queryCommandSupported('copy')) {
+        return false
+      }
+
+      let $input = document.createElement('input')
+      $input.style.opacity = '0'
+      $input.value = content
+      document.body.appendChild($input)
+      $input.select()
+
+      const result = document.execCommand('copy')
+      document.body.removeChild($input)
+      $input = null
+
+      return result
+    },
+
+    // 页面重新加载
+    reload() {
+      location.reload();
+    }
+  }
+})
+</script>
+</html>
