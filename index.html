@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Icon Font Preview</title>
+  <meta name="keywords" content="iconfont preview for web">
+  <meta name="description" content="iconfont preview for web, Momo's Blog, LuckyMomo">
+  <title>Iconfont Preview</title>
   <style>
   /*全局设置*/
   body::-webkit-scrollbar { display: none}
@@ -16,7 +18,7 @@
   }
   #app {
     text-align: center;
-    padding: 10px 50px;
+    padding: 10px 50px 80px;
   }
   .p-action {
     margin: 20px auto;
@@ -26,7 +28,7 @@
     text-align: center;
     font-weight: bold;
   }
-  .p-reset {
+  .p-reset, .p-copy-type {
     position: absolute;
     top: 38px;
     right: 100px;
@@ -40,13 +42,17 @@
     opacity: 1;
     transition: 0.3s all;
   }
-  .p-reset:hover {
+  .p-reset:hover, .p-copy-type:hover {
     opacity: 0.9;
   }
-  .p-github {
+  .p-copy-type {
+    left: 100px;
+    right: auto;
+  }
+  .p-github, .p-other {
     position: fixed;
     right: 50px;
-    bottom: 50px;
+    bottom: 70px;
     background-color: #eff3f6;
     background-image: linear-gradient(-180deg, #fafbfc, #eff3f6 90%);
     color: #24292e;
@@ -59,8 +65,27 @@
     line-height: 20px;
     padding: 6px 12px;
   }
-  .p-github:hover {
+  .p-help {
+    position: fixed;
+    right: 50px;
+    top: 50px;
+    width: 30px;
+    height: 30px;
+    color: #666666;
+    z-index: 2;
+    line-height: 30px;
+    font-weight: bolder;
+    border-radius: 50%;
+    border: 1px solid rgba(27, 31, 35, .2);
+    cursor: pointer;
+    background-color: #eff3f6;
+    background-image: linear-gradient(-180deg, #fafbfc, #eff3f6 90%);
+  }
+  .p-github:hover, .p-other:hover, .p-help {
     opacity: 0.9;
+  }
+  .p-other {
+    bottom: 30px;
   }
   /*字体文件载入*/
   .p-input-container {
@@ -144,6 +169,10 @@
     border-color: transparent;
     box-shadow: 0 5px 18px 0 rgba(0, 0, 0, 0.3);
   }
+  .p-icon-item:active {
+    color: white;
+    background: #7BD784;
+  }
   .p-icon-item .iconfont {
     margin: 0 20px;
     padding: 6px;
@@ -168,8 +197,11 @@
 <section id="app" v-cloak>
   <!--顶部操作提示-->
   <section class="p-action g-box">{{tips}}</section>
+  <div v-if="iconList.length > 0" class="p-copy-type" @click="copyType = copyType === 'value' ? 'name' : 'value'">复制 {{ copyType }}</div>
   <div v-if="iconList.length > 0" class="p-reset" @click="reload">重新载入</div>
-  <a class="p-github" href="https://github.com/Momo707577045/iconFontPreview">github</a>
+  <a class="p-help" target="_blank" href="https://segmentfault.com/a/1190000020121850">?</a>
+  <a class="p-github" target="_blank" href="https://github.com/Momo707577045/iconFontPreview">github</a>
+  <a class="p-other" target="_blank" href="http://blog.luckly-mjw.cn/tool-show/index.html">其他实用工具</a>
   <!--文件载入-->
   <section class="p-input-container" v-if="iconList.length === 0">
     <div class="url-box">
@@ -179,14 +211,14 @@
     <div class="line"></div>
     <div class="file-box">
       <div class="input-box" v-if="iconList.length === 0">
-        解析本地 ttf 文件
+        <label>解析本地 ttf 文件</label>
         <input type="file" @change="getLocalTTF" accept=".ttf">
       </div>
     </div>
   </section>
   <!--icon 展示-->
   <section v-else>
-    <div v-for="item in iconList" class="p-icon-item" @click="copyToClipboard(item.value)">
+    <div v-for="item in iconList" class="p-icon-item" @click="copyToClipboard(item[copyType])">
       <!--iconexchange-->
       <svg v-if="isSymbol" class="icon" aria-hidden="true" v-html="`<use xlink:href='${item.value}'></use>`"></svg>
       <p v-else class="iconfont" v-html="isCSS ? '' : item.value" :class="isCSS ? item.name : '' "></p>
@@ -196,10 +228,19 @@
   </section>
 </section>
 </body>
+<script>
+var _hmt = _hmt || [];
+(function () {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?1f12b0865d866ae1b93514870d93ce89";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
 <!--ttf文件解析库-->
 <script src="https://cdn.jsdelivr.net/npm/opentype.js@latest/dist/opentype.min.js"></script>
 <!--vue 前端框架-->
-<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
 <script>
 
 new Vue({
@@ -207,9 +248,10 @@ new Vue({
 
   data() {
     return {
-      url: '', // 在线链接
+      url: '//at.alicdn.com/t/font_1349299_kjq7u4s9t8m.css', // 在线链接
       tips: '请选择字体文件源', // 顶部提示
       timeouter: 0, // 操作提示计时器
+      copyType: 'value', // icon 复制类型
       isSymbol: false, // 是否 symbol 模式
       isCSS: false, // 是否 css 文件链接
       iconList: [], // icon 列表
