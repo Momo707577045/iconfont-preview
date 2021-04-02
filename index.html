@@ -28,7 +28,7 @@
     text-align: center;
     font-weight: bold;
   }
-  .p-reset, .p-copy-type, .p-change-background {
+  .p-reset, .p-copy-type, .p-change-background, .p-show-all {
     position: absolute;
     top: 38px;
     right: 100px;
@@ -42,12 +42,15 @@
     opacity: 1;
     transition: 0.3s all;
   }
-  .p-reset:hover, .p-copy-type:hover, .p-change-background:hover {
+  .p-reset:hover, .p-copy-type:hover, .p-change-background:hover, .p-show-all:hover {
     opacity: 0.9;
   }
   .p-copy-type {
     left: 100px;
     right: auto;
+  }
+  .p-show-all {
+    right: 245px;
   }
   .p-change-background {
     left: 260px;
@@ -164,6 +167,7 @@
     cursor: pointer;
     border: 1px solid #dddddd;
     overflow: hidden;
+    white-space: pre-line;
     box-sizing: border-box;
     transition-duration: .4s;
     transition-property: background, box-shadow;
@@ -212,6 +216,7 @@
   <section class="p-action g-box">{{tips}}</section>
   <div v-if="iconList.length > 0" class="p-copy-type" @click="copyType = copyType === 'value' ? 'name' : 'value'">复制 {{ copyType }}</div>
   <div v-if="iconList.length > 0" class="p-change-background" @click="backgroundIndex = (backgroundIndex + 1) % 3">切换背景</div>
+  <div v-if="iconList.length > 0 && bufferStr" class="p-show-all" @click="showAll">显示副本 unicode</div>
   <div v-if="iconList.length > 0" class="p-reset" @click="reload">重新载入</div>
   <a class="p-help" target="_blank" href="https://segmentfault.com/a/1190000020121850">?</a>
   <a class="p-github" target="_blank" href="https://github.com/Momo707577045/iconfont-preview">github</a>
@@ -233,9 +238,8 @@
   <!--icon 展示-->
   <section v-else>
     <div v-for="item in iconList" class="p-icon-item" :class="[`p-icon-item-background-${backgroundIndex}`]" @click="copyToClipboard(item[copyType])">
-      <!--iconexchange-->
       <svg v-if="isSymbol" class="icon" aria-hidden="true" v-html="`<use xlink:href='${item.value}'></use>`"></svg>
-      <p v-else class="iconfont" v-html="isCSS ? '' : item.value" :class="isCSS ? item.name : '' "></p>
+      <p v-else class="iconfont" v-html="isCSS ? '' : item.value.split(';')[0] + ';'" :class="isCSS ? item.name : '' "></p>
       <p class="name">{{item.name}}</p>
       <p class="value">{{item.value}}</p>
     </div>
@@ -244,7 +248,7 @@
 </body>
 <script>
 var _hmt = _hmt || [];
-(function () {
+(function() {
   var hm = document.createElement("script");
   hm.src = "https://hm.baidu.com/hm.js?1f12b0865d866ae1b93514870d93ce89";
   var s = document.getElementsByTagName("script")[0];
@@ -267,6 +271,7 @@ new Vue({
       tips: '请选择字体文件源', // 顶部提示
       timeouter: 0, // 操作提示计时器
       copyType: 'value', // icon 复制类型
+      bufferStr: null, // 字体编码内容
       isSymbol: false, // 是否 symbol 模式
       isCSS: false, // 是否 css 文件链接
       iconList: [], // icon 列表
@@ -283,7 +288,7 @@ new Vue({
         xhr.responseType = 'arraybuffer';
       }
 
-      xhr.onreadystatechange = function () {
+      xhr.onreadystatechange = function() {
         if (xhr.readyState === 4) {
           let status = xhr.status;
           if (status >= 200 && status < 300) {
@@ -384,15 +389,33 @@ new Vue({
       })
     },
 
+    // 打开所有副本
+    showAll() {
+      this.parseIcon(this.bufferStr, true)
+    },
+
     // 解析icon
-    parseIcon(bufferStr) {
-      let result = window.opentype.parse(bufferStr);
+    parseIcon(bufferStr, showAll) {
+      this.bufferStr = bufferStr
+      this.iconList = []
+      let result = window.opentype.parse(this.bufferStr);
+      console.log(result)
       for (let key in result.glyphs.glyphs) {
         let item = result.glyphs.glyphs[key]
-        item.unicode && this.iconList.push({
-          name: item.name,
-          value: `&#${item.unicode};`
-        })
+        if (!item.unicode) {
+        } else if (showAll) { // 是否显示所有 unicodes
+          let valueStr = ''
+          item.unicodes.forEach(unicode => valueStr += `&#${unicode};\n`)
+          this.iconList.push({
+            name: item.name,
+            value: valueStr
+          })
+        } else {
+          this.iconList.push({
+            name: item.name,
+            value: `&#${item.unicode};`
+          })
+        }
       }
       this.tips = '点击复制icon代码'
     },
