@@ -239,7 +239,7 @@
   <section v-else>
     <div v-for="item in iconList" class="p-icon-item" :class="[`p-icon-item-background-${backgroundIndex}`]" @click="copyToClipboard(item[copyType])">
       <svg v-if="isSymbol" class="icon" aria-hidden="true" v-html="`<use xlink:href='${item.value}'></use>`"></svg>
-      <p v-else class="iconfont" v-html="isCSS ? '' : item.value.split(';')[0] + ';'" :class="isCSS ? item.name : '' "></p>
+      <p v-else class="iconfont" v-html="isCSS ? '' : item.show" :class="isCSS ? item.show : '' "></p>
       <p class="name">{{item.name}}</p>
       <p class="value">{{item.value}}</p>
     </div>
@@ -358,6 +358,7 @@ new Vue({
           this.setStyle('', params)
           params.replace(/\.([^:^ ]+):[\s\S]+?content: "\\([^"]+)";/gi, (...item) => {
             this.iconList.push({
+              show: item[1],
               name: item[1],
               value: `&#${item[2]};`,
             })
@@ -381,6 +382,7 @@ new Vue({
           //id="iconexchange"
           params.replace(/id="([^"]+)"/gi, (...item) => {
             this.iconList.push({
+              show: item[1].replace(/icon/, ''),
               name: item[1].replace(/icon/, ''),
               value: `#${item[1]}`,
             })
@@ -399,7 +401,6 @@ new Vue({
       this.bufferStr = bufferStr
       this.iconList = []
       let result = window.opentype.parse(this.bufferStr);
-      console.log(result)
       for (let key in result.glyphs.glyphs) {
         let item = result.glyphs.glyphs[key]
         if (!item.unicode) {
@@ -408,15 +409,22 @@ new Vue({
           item.unicodes.forEach(unicode => valueStr += `&#${unicode};\n`)
           this.iconList.push({
             name: item.name,
-            value: valueStr
+            value: valueStr,
+            show: `&#${item.unicode};`
           })
         } else {
           this.iconList.push({
             name: item.name,
+            show: `&#${item.unicode};`,
             value: `&#${item.unicode};`
           })
         }
       }
+      this.iconList.forEach(item => {
+        item.value = item.value.replace(/&#([^;]+);/ig, (target, value) => {
+          return `&#x${parseInt(value).toString(16)};`
+        })
+      })
       this.tips = '点击复制icon代码'
     },
 
