@@ -119,7 +119,7 @@
   .p-input-container .url-box input {
     margin-bottom: 30px;
     display: block;
-    width: 280px;
+    width: 430px;
     padding: 10px;
     font-size: 24px;
     border-radius: 4px;
@@ -155,7 +155,7 @@
     cursor: pointer;
   }
   .p-input-container .url-box div {
-    width: 240px;
+    width: 390px;
   }
   /*icon 列表样式*/
   .p-icon-item {
@@ -224,7 +224,7 @@
   <!--文件载入-->
   <section class="p-input-container" v-if="iconList.length === 0">
     <div class="url-box">
-      <input type="text" v-model="url" placeholder="在线 ttf、css 或 js 链接">
+      <input type="text" v-model="url" placeholder="在线 ttf、css 或 js 链接" v-on:keyup.enter="getURLFile">
       <div @click="getURLFile">线上链接预览</div>
     </div>
     <div class="line"></div>
@@ -278,6 +278,16 @@ new Vue({
     }
   },
 
+  // 获取链接中携带的资源链接
+  created() {
+    const urlObj = new URL(location.href)
+    const url = urlObj.searchParams.get('source')
+    if(url){
+      this.url = decodeURIComponent(url)
+      this.getURLFile()
+    } 
+  },
+  
   methods: {
 
     // ajax 请求
@@ -310,6 +320,10 @@ new Vue({
         alert('请输入链接')
         return
       }
+      
+      const urlObj = new URL(location.href)
+      urlObj.searchParams.set('source', encodeURIComponent(this.url))
+      window.history.replaceState(null, '', urlObj.href)
 
       if (this.url.toLowerCase().indexOf('.ttf') !== -1) {
         this.getOnlineTTF()
@@ -377,7 +391,7 @@ new Vue({
           let $script = document.createElement('script')
           $script.src = this.url
           document.body.append($script);
-          console.log(params)
+          // console.log(params)
 
           //id="iconexchange"
           params.replace(/id="([^"]+)"/gi, (...item) => {
@@ -476,7 +490,9 @@ new Vue({
 
     // 页面重新加载
     reload() {
-      location.reload();
+      const urlObj = new URL(location.href)
+      urlObj.searchParams.delete('source')
+      location.href = urlObj.href
     }
   }
 })
