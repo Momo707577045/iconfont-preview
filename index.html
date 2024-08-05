@@ -96,20 +96,18 @@
   }
   /*字体文件载入*/
   .p-input-container {
-    display: flex;
     padding-top: 50px;
   }
   .p-input-container .line {
     vertical-align: top;
-    width: 5px;
-    height: 400px;
+    width: 100%;
+    height: 6px;
+    margin: 30px 0;
     transform-origin: top;
     background-repeat: repeat;
-    background-image: url(http://www.luckly-mjw.cn/baseSource/icon-dotted-y.png);
+    background-image: url(https://upyun.luckly-mjw.cn/Assets/base-source/icon-dotted-x.png);
   }
   .p-input-container .url-box, .file-box {
-    height: 300px;
-    flex: 1;
     position: relative;
     display: flex;
     justify-content: center;
@@ -119,19 +117,21 @@
   .p-input-container .url-box input {
     margin-bottom: 30px;
     display: block;
-    width: 430px;
+    width: 100%;
     padding: 10px;
     font-size: 24px;
     border-radius: 4px;
     box-shadow: none;
     color: #444444;
     border: 1px solid #cccccc;
+    box-sizing: border-box;
   }
   .p-input-container .input-box, .url-box div {
     position: relative;
     display: inline-block;
-    height: 50px;
+    width: 100%;
     line-height: 50px;
+    box-sizing: border-box;
     padding: 10px 30px;
     font-size: 30px;
     color: white;
@@ -155,7 +155,7 @@
     cursor: pointer;
   }
   .p-input-container .url-box div {
-    width: 390px;
+    width: 100%;
   }
   /*icon 列表样式*/
   .p-icon-item {
@@ -224,14 +224,14 @@
   <!--文件载入-->
   <section class="p-input-container" v-if="iconList.length === 0">
     <div class="url-box">
-      <input type="text" v-model="url" placeholder="在线 ttf、css 或 js 链接" v-on:keyup.enter="getURLFile">
+      <input type="text" v-model="url" placeholder="在线 ttf、woff、woff2、css 或 js 链接" v-on:keyup.enter="getURLFile">
       <div @click="getURLFile">线上链接预览</div>
     </div>
     <div class="line"></div>
     <div class="file-box">
       <div class="input-box" v-if="iconList.length === 0">
-        <label>解析本地 ttf、woff、otf 文件</label>
-        <input type="file" @change="getLocalTTF" accept=".ttf,.woff,.otf">
+        <label>解析本地 ttf、woff、woff2、otf 文件</label>
+        <input type="file" @change="getLocalTTF" accept=".ttf,.woff,.woff2,.otf">
       </div>
     </div>
   </section>
@@ -255,11 +255,15 @@ var _hmt = _hmt || [];
   s.parentNode.insertBefore(hm, s);
 })();
 </script>
-<!--ttf文件解析库-->
-<script src="https://cdn.jsdelivr.net/npm/opentype.js@latest/dist/opentype.min.js"></script>
 <!--vue 前端框架-->
-<script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
+<script src="https://upyun.luckly-mjw.cn/lib/vue.js"></script>
+<!--woff2前置解码库-->
+<script src="https://upyun.luckly-mjw.cn/lib/woff2-decode.js"></script>
+<!--ttf文件解析库-->
+<script src="https://upyun.luckly-mjw.cn/lib/opentype.min.js"></script>
 <script>
+// script注入
+const WOFF2_DECODE = Module
 
 new Vue({
   el: '#app',
@@ -325,7 +329,7 @@ new Vue({
       urlObj.searchParams.set('source', encodeURIComponent(this.url))
       window.history.replaceState(null, '', urlObj.href)
 
-      if (this.url.toLowerCase().indexOf('.ttf') !== -1) {
+      if (/(ttf|woff2|woff)/.test(this.url.toLowerCase())) {
         this.getOnlineTTF()
       } else if (this.url.toLowerCase().indexOf('.css') !== -1) {
         this.getOnlineCSS()
@@ -341,13 +345,12 @@ new Vue({
       let file = event.target.files[0]
       let reader = new FileReader();
       reader.readAsArrayBuffer(file);
-      reader.onload = (evt) => { this.parseIcon(evt.target.result); }
+      reader.onload = (evt) => { this.parseIcon(evt.target.result, false, /woff2/.test(file.name)); }
 
       // base64 编码，动态加入 @font-face
       let readerBase64 = new FileReader();
       readerBase64.readAsDataURL(file)
       readerBase64.onload = (evt) => { this.setStyle(evt.target.result) }
-
     },
 
     // 解析在线 ttf 文件
@@ -356,7 +359,7 @@ new Vue({
       this.ajax({
         url: this.url,
         type: 'buffer',
-        success: (params) => { this.parseIcon(params) }
+        success: (params) => { this.parseIcon(params, false, /woff2/.test(this.url)) }
       })
 
       this.setStyle(this.url)
@@ -413,10 +416,11 @@ new Vue({
     },
 
     // 解析icon
-    parseIcon(bufferStr, showAll) {
+    async parseIcon(bufferStr, showAll, isWoff2) {
       this.bufferStr = bufferStr
       this.iconList = []
-      let result = window.opentype.parse(this.bufferStr);
+      const bufferAfterDecode = isWoff2 ? Uint8Array.from(WOFF2_DECODE.decompress(this.bufferStr)).buffer : this.bufferStr;
+      let result = window.opentype.parse(bufferAfterDecode);
       for (let key in result.glyphs.glyphs) {
         let item = result.glyphs.glyphs[key]
         if (!item.unicode) {
@@ -498,5 +502,6 @@ new Vue({
     }
   }
 })
+// script注入
 </script>
 </html>
