@@ -211,7 +211,7 @@
   </style>
 </head>
 <body>
-<section id="app" v-cloak>
+<section id="iconfont-preview" v-cloak>
   <!--顶部操作提示-->
   <section class="p-action g-box">{{tips}}</section>
   <div v-if="iconList.length > 0" class="p-copy-type" @click="copyType = copyType === 'value' ? 'name' : 'value'">复制 {{ copyType }}</div>
@@ -266,7 +266,7 @@ var _hmt = _hmt || [];
 const WOFF2_DECODE = Module
 
 new Vue({
-  el: '#app',
+  el: '#iconfont-preview',
 
   data() {
     return {

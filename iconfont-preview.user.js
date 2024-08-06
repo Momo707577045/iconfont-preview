@@ -171,18 +171,26 @@
 
           ajax({ // ttf文件解析库
             url: 'https://upyun.luckly-mjw.cn/lib/opentype.min.js',
-            success: (streamSaverStr) => {
-              let $streamSaver = document.createElement('script')
-              $streamSaver.innerHTML = streamSaverStr
-              document.body.appendChild($streamSaver);
-              ajax({ // 加载 vue
-                url: 'https://upyun.luckly-mjw.cn/lib/vue.js',
-                success: (vueStr) => {
-                  let $vue = document.createElement('script')
-                  $vue.innerHTML = vueStr
-                  document.body.appendChild($vue);
-                  alert('注入成功，请滚动到页面底部')
-                  eval(script)
+            success: (opentypeSaverStr) => {
+              let $opentypeSaver = document.createElement('script')
+              $opentypeSaver.innerHTML = opentypeSaverStr
+              document.body.appendChild($opentypeSaver);
+              ajax({ // 加载 woff2 解码库
+                url: 'https://upyun.luckly-mjw.cn/lib/woff2-decode.js',
+                success: (woff2Str) => {
+                  let $woff2 = document.createElement('script')
+                  $woff2.innerHTML = woff2Str
+                  document.body.appendChild($woff2);
+                  ajax({ // 加载 vue
+                    url: 'https://upyun.luckly-mjw.cn/lib/vue.js',
+                    success: (vueStr) => {
+                      let $vue = document.createElement('script')
+                      $vue.innerHTML = vueStr
+                      document.body.appendChild($vue);
+                      alert('注入成功，请滚动到页面底部')
+                      eval(script)
+                    }
+                  })
                 }
               })
             }
@@ -194,5 +202,5 @@
 
   setTimeout(() => {
     performance.getEntries().map(item => item.name).forEach(url => checkIconUrl(url));
-  })
+  }, 2000)
 })();
