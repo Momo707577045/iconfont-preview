@@ -56,7 +56,7 @@
     left: 260px;
     right: auto;
   }
-  .p-github, .p-other {
+  .p-github, .p-tamper, .p-other {
     position: fixed;
     right: 50px;
     bottom: 70px;
@@ -85,14 +85,21 @@
     border-radius: 50%;
     border: 1px solid rgba(27, 31, 35, .2);
     cursor: pointer;
+    text-align: center;
     background-color: #eff3f6;
     background-image: linear-gradient(-180deg, #fafbfc, #eff3f6 90%);
   }
-  .p-github:hover, .p-other:hover, .p-help {
+  .p-github:hover, .p-tamper:hover, .p-other:hover, .p-help {
     opacity: 0.9;
   }
   .p-other {
     bottom: 30px;
+  }
+  .p-tamper {
+    bottom: 70px;
+  }
+  .p-github {
+    bottom: 110px;
   }
   /*字体文件载入*/
   .p-input-container {
@@ -219,6 +226,7 @@
   <div v-if="iconList.length > 0 && bufferStr" class="p-show-all" @click="showAll">显示副本 unicode</div>
   <div v-if="iconList.length > 0" class="p-reset" @click="reload">重新载入</div>
   <a class="p-help" target="_blank" href="https://segmentfault.com/a/1190000020121850">?</a>
+  <a class="p-tamper" target="_blank" href="https://blog.luckly-mjw.cn/tool-show/iconfont-preview/iconfont-preview.user.js">添加油猴插件</a>
   <a class="p-github" target="_blank" href="https://github.com/Momo707577045/iconfont-preview">github</a>
   <a class="p-other" target="_blank" href="http://blog.luckly-mjw.cn/tool-show/index.html">其他实用工具</a>
   <!--文件载入-->
@@ -325,9 +333,12 @@ new Vue({
         return
       }
       
-      const urlObj = new URL(location.href)
-      urlObj.searchParams.set('source', encodeURIComponent(this.url))
-      window.history.replaceState(null, '', urlObj.href)
+      // 在下载页面才触发，修改页面 URL，携带下载路径，避免刷新后丢失
+      if (location.href.includes('blog.luckly-mjw.cn')) {
+        const urlObj = new URL(location.href)
+        urlObj.searchParams.set('source', encodeURIComponent(this.url))
+        window.history.replaceState(null, '', urlObj.href)
+      }
 
       if (/(ttf|woff2|woff)/.test(this.url.toLowerCase())) {
         this.getOnlineTTF()
@@ -359,7 +370,10 @@ new Vue({
       this.ajax({
         url: this.url,
         type: 'buffer',
-        success: (params) => { this.parseIcon(params, false, /woff2/.test(this.url)) }
+        success: (params) => { this.parseIcon(params, false, /woff2/.test(this.url)) },
+        fail: () => {
+          alert('链接无效或跨域，跨域时请，使用右下角的油猴脚本，使用「注入解析」功能')
+        }
       })
 
       this.setStyle(this.url)
@@ -381,6 +395,9 @@ new Vue({
             })
           })
           this.tips = '点击复制icon代码'
+        },
+        fail: () => {
+          alert('链接错误或跨域，跨域时请使用「注入解析」功能')
         }
       })
     },
@@ -406,6 +423,9 @@ new Vue({
             })
           })
           this.tips = '点击复制icon代码'
+        },
+        fail: () => {
+          alert('链接错误或跨域，跨域时请使用「注入解析」功能')
         }
       })
     },
