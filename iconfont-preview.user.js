@@ -49,16 +49,25 @@
   }
 
   function showIconList(iconUrls) {
+    if(!iconUrls.length) {
+      return
+    }
     const itemStyle = `
     margin-top: 6px;
+    text-align: right;
     `
     const iconStyle = `
     margin-right: 6px;
     padding: 6px 10px ;
     font-size: 12px;
     color: white;
+    max-width: 500px;
     border-radius: 4px;
     display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    vertical-align: top;
+    text-overflow: ellipsis;
     border: 1px solid #eeeeee;
     background-color: #3D8AC7;
     `
