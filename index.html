@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
@@ -8,260 +9,323 @@
   <meta name="description" content="iconfont preview for web, Momo's Blog, LuckyMomo">
   <title>Iconfont Preview</title>
   <style>
-  /*全局设置*/
-  body::-webkit-scrollbar { display: none}
-  p {
-    margin: 0;
-  }
-  [v-cloak] {
-    display: none;
-  }
-  #app {
-    text-align: center;
-    padding: 10px 50px 80px;
-  }
-  .p-action {
-    margin: 20px auto;
-    max-width: 1100px;
-    width: 100%;
-    font-size: 35px;
-    text-align: center;
-    font-weight: bold;
-  }
-  .p-reset, .p-copy-type, .p-change-background, .p-show-all {
-    position: absolute;
-    top: 38px;
-    right: 100px;
-    padding: 8px 20px;
-    font-size: 20px;
-    color: white;
-    cursor: pointer;
-    border-radius: 4px;
-    border: 1px solid #aaaaaa;
-    background-color: #3D8AC7;
-    opacity: 1;
-    transition: 0.3s all;
-  }
-  .p-reset:hover, .p-copy-type:hover, .p-change-background:hover, .p-show-all:hover {
-    opacity: 0.9;
-  }
-  .p-copy-type {
-    left: 100px;
-    right: auto;
-  }
-  .p-show-all {
-    right: 245px;
-  }
-  .p-change-background {
-    left: 260px;
-    right: auto;
-  }
-  .p-github, .p-tamper, .p-other {
-    position: fixed;
-    right: 50px;
-    bottom: 70px;
-    background-color: #eff3f6;
-    background-image: linear-gradient(-180deg, #fafbfc, #eff3f6 90%);
-    color: #24292e;
-    border: 1px solid rgba(27, 31, 35, .2);
-    border-radius: 3px;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 20px;
-    padding: 6px 12px;
-  }
-  .p-help {
-    position: fixed;
-    right: 50px;
-    top: 50px;
-    width: 30px;
-    height: 30px;
-    color: #666666;
-    z-index: 2;
-    line-height: 30px;
-    font-weight: bolder;
-    border-radius: 50%;
-    border: 1px solid rgba(27, 31, 35, .2);
-    cursor: pointer;
-    text-align: center;
-    background-color: #eff3f6;
-    background-image: linear-gradient(-180deg, #fafbfc, #eff3f6 90%);
-  }
-  .p-github:hover, .p-tamper:hover, .p-other:hover, .p-help {
-    opacity: 0.9;
-  }
-  .p-other {
-    bottom: 30px;
-  }
-  .p-tamper {
-    bottom: 70px;
-  }
-  .p-github {
-    bottom: 110px;
-  }
-  /*字体文件载入*/
-  .p-input-container {
-    padding-top: 50px;
-  }
-  .p-input-container .line {
-    vertical-align: top;
-    width: 100%;
-    height: 6px;
-    margin: 30px 0;
-    transform-origin: top;
-    background-repeat: repeat;
-    background-image: url(https://upyun.luckly-mjw.cn/Assets/base-source/icon-dotted-x.png);
-  }
-  .p-input-container .url-box, .file-box {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-  }
-  .p-input-container .url-box input {
-    margin-bottom: 30px;
-    display: block;
-    width: 100%;
-    padding: 10px;
-    font-size: 24px;
-    border-radius: 4px;
-    box-shadow: none;
-    color: #444444;
-    border: 1px solid #cccccc;
-    box-sizing: border-box;
-  }
-  .p-input-container .input-box, .url-box div {
-    position: relative;
-    display: inline-block;
-    width: 100%;
-    line-height: 50px;
-    box-sizing: border-box;
-    padding: 10px 30px;
-    font-size: 30px;
-    color: white;
-    cursor: pointer;
-    border-radius: 4px;
-    border: 1px solid #aaaaaa;
-    background-color: #3D8AC7;
-    opacity: 1;
-    transition: 0.3s all;
-  }
-  .p-input-container .input-box:hover, .url-box div:hover {
-    opacity: 0.9;
-  }
-  .p-input-container .input-box input {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    cursor: pointer;
-  }
-  .p-input-container .url-box div {
-    width: 100%;
-  }
-  /*icon 列表样式*/
-  .p-icon-item {
-    margin: 6px;
-    padding: 10px 6px;
-    display: inline-block;
-    text-align: center;
-    border-radius: 4px;
-    cursor: pointer;
-    border: 1px solid #dddddd;
-    overflow: hidden;
-    white-space: pre-line;
-    box-sizing: border-box;
-    transition-duration: .4s;
-    transition-property: background, box-shadow;
-  }
-  .p-icon-item-background-0 {
-    background-image: url(http://upyun.luckly-mjw.cn/Assets/base-source/png-background.png);
-  }
-  .p-icon-item-background-1 {
-    background-color: #FCFCFC;
-  }
-  .p-icon-item-background-2 {
-    background-color: #EBEBEB;
-  }
-  .p-icon-item:hover {
-    background: #ffffff;
-    border-color: transparent;
-    box-shadow: 0 5px 18px 0 rgba(0, 0, 0, 0.3);
-  }
-  .p-icon-item:active {
-    color: white;
-    background: #7BD784;
-  }
-  .p-icon-item .iconfont {
-    margin: 0 20px;
-    padding: 6px;
-    border-radius: 4px;
-    font-size: 28px;
-  }
-  .p-icon-item .name {
-    font-size: 12px;
-    font-weight: bold;
-  }
-  .p-icon-item .value {
-    font-size: 12px;
-    font-weight: bold;
-  }
-  .p-icon-item svg {
-    width: 36px;
-    height: 36px;
-  }
+    /*全局设置*/
+    body::-webkit-scrollbar {
+      display: none
+    }
+
+    p {
+      margin: 0;
+    }
+
+    [v-cloak] {
+      display: none;
+    }
+
+    #app {
+      text-align: center;
+      padding: 10px 50px 80px;
+    }
+
+    .p-action {
+      margin: 20px auto;
+      max-width: 1100px;
+      width: 100%;
+      font-size: 35px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .p-reset,
+    .p-copy-type,
+    .p-change-background,
+    .p-show-all {
+      position: absolute;
+      top: 38px;
+      right: 100px;
+      padding: 8px 20px;
+      font-size: 20px;
+      color: white;
+      cursor: pointer;
+      border-radius: 4px;
+      border: 1px solid #aaaaaa;
+      background-color: #3D8AC7;
+      opacity: 1;
+      transition: 0.3s all;
+    }
+
+    .p-reset:hover,
+    .p-copy-type:hover,
+    .p-change-background:hover,
+    .p-show-all:hover {
+      opacity: 0.9;
+    }
+
+    .p-copy-type {
+      left: 100px;
+      right: auto;
+    }
+
+    .p-show-all {
+      right: 245px;
+    }
+
+    .p-change-background {
+      left: 260px;
+      right: auto;
+    }
+
+    .p-github,
+    .p-tamper,
+    .p-other {
+      position: fixed;
+      right: 50px;
+      bottom: 70px;
+      background-color: #eff3f6;
+      background-image: linear-gradient(-180deg, #fafbfc, #eff3f6 90%);
+      color: #24292e;
+      border: 1px solid rgba(27, 31, 35, .2);
+      border-radius: 3px;
+      cursor: pointer;
+      display: inline-block;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 20px;
+      padding: 6px 12px;
+    }
+
+    .p-help {
+      position: fixed;
+      right: 50px;
+      top: 50px;
+      width: 30px;
+      height: 30px;
+      color: #666666;
+      z-index: 2;
+      line-height: 30px;
+      font-weight: bolder;
+      border-radius: 50%;
+      border: 1px solid rgba(27, 31, 35, .2);
+      cursor: pointer;
+      text-align: center;
+      background-color: #eff3f6;
+      background-image: linear-gradient(-180deg, #fafbfc, #eff3f6 90%);
+    }
+
+    .p-github:hover,
+    .p-tamper:hover,
+    .p-other:hover,
+    .p-help {
+      opacity: 0.9;
+    }
+
+    .p-other {
+      bottom: 30px;
+    }
+
+    .p-tamper {
+      bottom: 70px;
+    }
+
+    .p-github {
+      bottom: 110px;
+    }
+
+    /*字体文件载入*/
+    .p-input-container {
+      padding-top: 50px;
+    }
+
+    .p-input-container .line {
+      vertical-align: top;
+      width: 100%;
+      height: 6px;
+      margin: 30px 0;
+      transform-origin: top;
+      background-repeat: repeat;
+      background-image: url(https://upyun.luckly-mjw.cn/Assets/base-source/icon-dotted-x.png);
+    }
+
+    .p-input-container .url-box,
+    .file-box {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .p-input-container .url-box input {
+      margin-bottom: 30px;
+      display: block;
+      width: 100%;
+      padding: 10px;
+      font-size: 24px;
+      border-radius: 4px;
+      box-shadow: none;
+      color: #444444;
+      border: 1px solid #cccccc;
+      box-sizing: border-box;
+    }
+
+    .p-input-container .input-box,
+    .url-box div {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+      line-height: 50px;
+      box-sizing: border-box;
+      padding: 10px 30px;
+      font-size: 30px;
+      color: white;
+      cursor: pointer;
+      border-radius: 4px;
+      border: 1px solid #aaaaaa;
+      background-color: #3D8AC7;
+      opacity: 1;
+      transition: 0.3s all;
+    }
+
+    .p-input-container .input-box:hover,
+    .url-box div:hover {
+      opacity: 0.9;
+    }
+
+    .p-input-container .input-box input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .p-input-container .url-box div {
+      width: 100%;
+    }
+
+    /*icon 列表样式*/
+    .p-icon-item {
+      margin: 6px;
+      padding: 10px 6px;
+      display: inline-block;
+      text-align: center;
+      border-radius: 4px;
+      cursor: pointer;
+      border: 1px solid #dddddd;
+      overflow: hidden;
+      white-space: pre-line;
+      box-sizing: border-box;
+      transition-duration: .4s;
+      transition-property: background, box-shadow;
+    }
+
+    .p-icon-item-background-0 {
+      background-image: url(http://upyun.luckly-mjw.cn/Assets/base-source/png-background.png);
+    }
+
+    .p-icon-item-background-1 {
+      background-color: #FCFCFC;
+    }
+
+    .p-icon-item-background-2 {
+      background-color: #EBEBEB;
+    }
+
+    .p-icon-item:hover {
+      background: #ffffff;
+      border-color: transparent;
+      box-shadow: 0 5px 18px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .p-icon-item:active {
+      color: white;
+      background: #7BD784;
+    }
+
+    .p-icon-item .iconfont {
+      margin: 0 20px;
+      padding: 6px;
+      border-radius: 4px;
+      font-size: 28px;
+    }
+
+    .p-icon-item .name {
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .p-icon-item .value {
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .p-icon-item svg {
+      width: 36px;
+      height: 36px;
+    }
   </style>
 </head>
+
 <body>
-<section id="iconfont-preview" v-cloak>
-  <!--顶部操作提示-->
-  <section class="p-action g-box">{{tips}}</section>
-  <div v-if="iconList.length > 0" class="p-copy-type" @click="copyType = copyType === 'value' ? 'name' : 'value'">复制 {{ copyType }}</div>
-  <div v-if="iconList.length > 0" class="p-change-background" @click="backgroundIndex = (backgroundIndex + 1) % 3">切换背景</div>
-  <div v-if="iconList.length > 0 && bufferStr" class="p-show-all" @click="showAll">显示副本 unicode</div>
-  <div v-if="iconList.length > 0" class="p-reset" @click="reload">重新载入</div>
-  <a class="p-help" target="_blank" href="https://segmentfault.com/a/1190000020121850">?</a>
-  <a class="p-tamper" target="_blank" href="https://blog.luckly-mjw.cn/tool-show/iconfont-preview/iconfont-preview.user.js">添加油猴插件</a>
-  <a class="p-github" target="_blank" href="https://github.com/Momo707577045/iconfont-preview">github</a>
-  <a class="p-other" target="_blank" href="http://blog.luckly-mjw.cn/tool-show/index.html">其他实用工具</a>
-  <!--文件载入-->
-  <section class="p-input-container" v-if="iconList.length === 0">
-    <div class="url-box">
-      <input type="text" v-model="url" placeholder="在线 ttf、woff、woff2、css 或 js 链接" v-on:keyup.enter="getURLFile">
-      <div @click="getURLFile">线上链接预览</div>
-    </div>
-    <div class="line"></div>
-    <div class="file-box">
-      <div class="input-box" v-if="iconList.length === 0">
-        <label>解析本地 ttf、woff、woff2、otf 文件</label>
-        <input type="file" @change="getLocalTTF" accept=".ttf,.woff,.woff2,.otf">
+  <section id="iconfont-preview" v-cloak>
+    <!--顶部操作提示-->
+    <section class="p-action g-box">{{tips}}</section>
+    <div v-if="iconList.length > 0" class="p-copy-type" @click="copyType = copyType === 'value' ? 'name' : 'value'">复制 {{ copyType }}</div>
+    <div v-if="iconList.length > 0" class="p-change-background" @click="backgroundIndex = (backgroundIndex + 1) % 3">切换背景</div>
+    <div v-if="iconList.length > 0 && bufferStr" class="p-show-all" @click="showAll">显示副本 unicode</div>
+    <div v-if="iconList.length > 0" class="p-reset" @click="reload">重新载入</div>
+    <a class="p-help" target="_blank" href="https://segmentfault.com/a/1190000020121850">?</a>
+    <a class="p-tamper" target="_blank" href="https://blog.luckly-mjw.cn/tool-show/iconfont-preview/iconfont-preview.user.js">添加油猴插件</a>
+    <a class="p-github" target="_blank" href="https://github.com/Momo707577045/iconfont-preview">github</a>
+    <a class="p-other" target="_blank" href="http://blog.luckly-mjw.cn/tool-show/index.html">其他实用工具</a>
+    <!--文件载入-->
+    <section class="p-input-container" v-if="iconList.length === 0">
+      <div class="url-box">
+        <input type="text" v-model="url" placeholder="在线 ttf、woff、woff2、css 或 js 链接" v-on:keyup.enter="getURLFile">
+        <div @click="getURLFile">线上链接预览</div>
+      </div>
+      <div class="line"></div>
+      <div class="file-box">
+        <div class="input-box" v-if="iconList.length === 0">
+          <label>解析本地 ttf、woff、woff2、otf 文件</label>
+          <input type="file" @change="getLocalTTF" accept=".ttf,.woff,.woff2,.otf">
+        </div>
+      </div>
+    </section>
+    <div v-if="iconList.length === 0" class="m-p-tips" style="border: 1px solid #eeeeee; padding: 20px; border-radius: 10px;">
+      <div style="display: flex; align-items: center; justify-content: center; margin-top: 20px; font-weight: bolder; font-size: 30px; color: #24292e;">
+        <svg style="color: rgb(59, 130, 246); margin-right: 20px;" xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users text-blue-500">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>加入我们的社区
+      </div>
+      <div style="display: flex; align-items: center; justify-content: center; margin-top: 20px;">
+        <img src="https://upyun.luckly-mjw.cn/Assets/qrcode/tools.png" alt="效率工具" title="logo" />
       </div>
     </div>
+    <!--icon 展示-->
+    <section v-else>
+      <div v-for="item in iconList" class="p-icon-item" :class="[`p-icon-item-background-${backgroundIndex}`]" @click="copyToClipboard(item[copyType])">
+        <svg v-if="isSymbol" class="icon" aria-hidden="true" v-html="`<use xlink:href='${item.value}'></use>`"></svg>
+        <p v-else class="iconfont" v-html="isCSS ? '' : item.show" :class="isCSS ? item.show : '' "></p>
+        <p class="name">{{item.name}}</p>
+        <p class="value">{{item.value}}</p>
+      </div>
+    </section>
   </section>
-  <!--icon 展示-->
-  <section v-else>
-    <div v-for="item in iconList" class="p-icon-item" :class="[`p-icon-item-background-${backgroundIndex}`]" @click="copyToClipboard(item[copyType])">
-      <svg v-if="isSymbol" class="icon" aria-hidden="true" v-html="`<use xlink:href='${item.value}'></use>`"></svg>
-      <p v-else class="iconfont" v-html="isCSS ? '' : item.show" :class="isCSS ? item.show : '' "></p>
-      <p class="name">{{item.name}}</p>
-      <p class="value">{{item.value}}</p>
-    </div>
-  </section>
-</section>
 </body>
 <script>
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "https://hm.baidu.com/hm.js?1f12b0865d866ae1b93514870d93ce89";
-  var s = document.getElementsByTagName("script")[0];
-  s.parentNode.insertBefore(hm, s);
-})();
+  var _hmt = _hmt || [];
+  (function () {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?1f12b0865d866ae1b93514870d93ce89";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  })();
 </script>
 <!--vue 前端框架-->
 <script src="https://upyun.luckly-mjw.cn/lib/vue.js"></script>
@@ -270,211 +334,211 @@ var _hmt = _hmt || [];
 <!--ttf文件解析库-->
 <script src="https://upyun.luckly-mjw.cn/lib/opentype.min.js"></script>
 <script>
-// script注入
-const WOFF2_DECODE = Module
+  // script注入
+  const WOFF2_DECODE = Module
 
-new Vue({
-  el: '#iconfont-preview',
+  new Vue({
+    el: '#iconfont-preview',
 
-  data() {
-    return {
-      backgroundIndex: 0, // 卡牌背景颜色
-      url: '//at.alicdn.com/t/font_1349299_kjq7u4s9t8m.css', // 在线链接
-      tips: '请选择字体文件源', // 顶部提示
-      timeouter: 0, // 操作提示计时器
-      copyType: 'value', // icon 复制类型
-      bufferStr: null, // 字体编码内容
-      isSymbol: false, // 是否 symbol 模式
-      isCSS: false, // 是否 css 文件链接
-      iconList: [], // icon 列表
-    }
-  },
-
-  // 获取链接中携带的资源链接
-  created() {
-    const urlObj = new URL(location.href)
-    const url = urlObj.searchParams.get('source')
-    if(url){
-      this.url = decodeURIComponent(url)
-      this.getURLFile()
-    } 
-  },
-  
-  methods: {
-
-    // ajax 请求
-    ajax(options) {
-      options = options || {};
-      let xhr = new XMLHttpRequest();
-      if (options.type === 'buffer') {
-        xhr.responseType = 'arraybuffer';
+    data() {
+      return {
+        backgroundIndex: 0, // 卡牌背景颜色
+        url: '//at.alicdn.com/t/font_1349299_kjq7u4s9t8m.css', // 在线链接
+        tips: '请选择字体文件源', // 顶部提示
+        timeouter: 0, // 操作提示计时器
+        copyType: 'value', // icon 复制类型
+        bufferStr: null, // 字体编码内容
+        isSymbol: false, // 是否 symbol 模式
+        isCSS: false, // 是否 css 文件链接
+        iconList: [], // icon 列表
       }
+    },
 
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-          let status = xhr.status;
-          if (status >= 200 && status < 300) {
-            console.log(xhr)
-            options.success && options.success(xhr.response);
+    // 获取链接中携带的资源链接
+    created() {
+      const urlObj = new URL(location.href)
+      const url = urlObj.searchParams.get('source')
+      if (url) {
+        this.url = decodeURIComponent(url)
+        this.getURLFile()
+      }
+    },
+
+    methods: {
+
+      // ajax 请求
+      ajax(options) {
+        options = options || {};
+        let xhr = new XMLHttpRequest();
+        if (options.type === 'buffer') {
+          xhr.responseType = 'arraybuffer';
+        }
+
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            let status = xhr.status;
+            if (status >= 200 && status < 300) {
+              console.log(xhr)
+              options.success && options.success(xhr.response);
+            } else {
+              options.fail && options.fail(status);
+            }
+          }
+        };
+
+        xhr.open("GET", options.url, true);
+        xhr.send(null);
+      },
+
+      // 获取在线文件
+      getURLFile() {
+        if (!this.url) {
+          alert('请输入链接')
+          return
+        }
+
+        // 在下载页面才触发，修改页面 URL，携带下载路径，避免刷新后丢失
+        if (location.href.includes('blog.luckly-mjw.cn')) {
+          const urlObj = new URL(location.href)
+          urlObj.searchParams.set('source', encodeURIComponent(this.url))
+          window.history.replaceState(null, '', urlObj.href)
+        }
+
+        if (/(ttf|woff2|woff)/.test(this.url.toLowerCase())) {
+          this.getOnlineTTF()
+        } else if (this.url.toLowerCase().indexOf('.css') !== -1) {
+          this.getOnlineCSS()
+        } else if (this.url.toLowerCase().indexOf('.js') !== -1) {
+          this.getOnlineJS()
+        }
+
+      },
+
+      // 解析本地 ttf 文件
+      getLocalTTF(event) {
+        // 解析文件内容
+        let file = event.target.files[0]
+        let reader = new FileReader();
+        reader.readAsArrayBuffer(file);
+        reader.onload = (evt) => { this.parseIcon(evt.target.result, false, /woff2/.test(file.name)); }
+
+        // base64 编码，动态加入 @font-face
+        let readerBase64 = new FileReader();
+        readerBase64.readAsDataURL(file)
+        readerBase64.onload = (evt) => { this.setStyle(evt.target.result) }
+      },
+
+      // 解析在线 ttf 文件
+      getOnlineTTF() {
+        // 远程获取文件
+        this.ajax({
+          url: this.url,
+          type: 'buffer',
+          success: (params) => { this.parseIcon(params, false, /woff2/.test(this.url)) },
+          fail: () => {
+            alert('链接无效或跨域，跨域时请，使用右下角的油猴脚本，使用「注入解析」功能')
+          }
+        })
+
+        this.setStyle(this.url)
+      },
+
+      // 解析 CSS 文件
+      getOnlineCSS() {
+        // 远程获取文件
+        this.isCSS = true;
+        this.ajax({
+          url: this.url,
+          success: (params) => {
+            this.setStyle('', params)
+            params.replace(/\.([^:^ ]+):[\s\S]+?content: "\\([^"]+)";/gi, (...item) => {
+              this.iconList.push({
+                show: item[1],
+                name: item[1],
+                value: `&#${item[2]};`,
+              })
+            })
+            this.tips = '点击复制icon代码'
+          },
+          fail: () => {
+            alert('链接错误或跨域，跨域时请使用「注入解析」功能')
+          }
+        })
+      },
+
+      // 解析 JS 文件
+      getOnlineJS() {
+        // 远程获取文件
+        this.isSymbol = true;
+        this.ajax({
+          url: this.url,
+          success: (params) => {
+            let $script = document.createElement('script')
+            $script.src = this.url
+            document.body.append($script);
+            // console.log(params)
+
+            //id="iconexchange"
+            params.replace(/id="([^"]+)"/gi, (...item) => {
+              this.iconList.push({
+                show: item[1].replace(/icon/, ''),
+                name: item[1].replace(/icon/, ''),
+                value: `#${item[1]}`,
+              })
+            })
+            this.tips = '点击复制icon代码'
+          },
+          fail: () => {
+            alert('链接错误或跨域，跨域时请使用「注入解析」功能')
+          }
+        })
+      },
+
+      // 打开所有副本
+      showAll() {
+        this.parseIcon(this.bufferStr, true)
+      },
+
+      // 解析icon
+      async parseIcon(bufferStr, showAll, isWoff2) {
+        this.bufferStr = bufferStr
+        this.iconList = []
+        const bufferAfterDecode = isWoff2 ? Uint8Array.from(WOFF2_DECODE.decompress(this.bufferStr)).buffer : this.bufferStr;
+        let result = window.opentype.parse(bufferAfterDecode);
+        for (let key in result.glyphs.glyphs) {
+          let item = result.glyphs.glyphs[key]
+          if (!item.unicode) {
+          } else if (showAll) { // 是否显示所有 unicodes
+            let valueStr = ''
+            item.unicodes.forEach(unicode => valueStr += `&#${unicode};\n`)
+            this.iconList.push({
+              name: item.name,
+              value: valueStr,
+              show: `&#${item.unicode};`
+            })
           } else {
-            options.fail && options.fail(status);
+            this.iconList.push({
+              name: item.name,
+              show: `&#${item.unicode};`,
+              value: `&#${item.unicode};`
+            })
           }
         }
-      };
-
-      xhr.open("GET", options.url, true);
-      xhr.send(null);
-    },
-
-    // 获取在线文件
-    getURLFile() {
-      if (!this.url) {
-        alert('请输入链接')
-        return
-      }
-      
-      // 在下载页面才触发，修改页面 URL，携带下载路径，避免刷新后丢失
-      if (location.href.includes('blog.luckly-mjw.cn')) {
-        const urlObj = new URL(location.href)
-        urlObj.searchParams.set('source', encodeURIComponent(this.url))
-        window.history.replaceState(null, '', urlObj.href)
-      }
-
-      if (/(ttf|woff2|woff)/.test(this.url.toLowerCase())) {
-        this.getOnlineTTF()
-      } else if (this.url.toLowerCase().indexOf('.css') !== -1) {
-        this.getOnlineCSS()
-      } else if (this.url.toLowerCase().indexOf('.js') !== -1) {
-        this.getOnlineJS()
-      }
-
-    },
-
-    // 解析本地 ttf 文件
-    getLocalTTF(event) {
-      // 解析文件内容
-      let file = event.target.files[0]
-      let reader = new FileReader();
-      reader.readAsArrayBuffer(file);
-      reader.onload = (evt) => { this.parseIcon(evt.target.result, false, /woff2/.test(file.name)); }
-
-      // base64 编码，动态加入 @font-face
-      let readerBase64 = new FileReader();
-      readerBase64.readAsDataURL(file)
-      readerBase64.onload = (evt) => { this.setStyle(evt.target.result) }
-    },
-
-    // 解析在线 ttf 文件
-    getOnlineTTF() {
-      // 远程获取文件
-      this.ajax({
-        url: this.url,
-        type: 'buffer',
-        success: (params) => { this.parseIcon(params, false, /woff2/.test(this.url)) },
-        fail: () => {
-          alert('链接无效或跨域，跨域时请，使用右下角的油猴脚本，使用「注入解析」功能')
-        }
-      })
-
-      this.setStyle(this.url)
-    },
-
-    // 解析 CSS 文件
-    getOnlineCSS() {
-      // 远程获取文件
-      this.isCSS = true;
-      this.ajax({
-        url: this.url,
-        success: (params) => {
-          this.setStyle('', params)
-          params.replace(/\.([^:^ ]+):[\s\S]+?content: "\\([^"]+)";/gi, (...item) => {
-            this.iconList.push({
-              show: item[1],
-              name: item[1],
-              value: `&#${item[2]};`,
-            })
+        this.iconList.forEach(item => {
+          item.value = item.value.replace(/&#([^;]+);/ig, (target, value) => {
+            return `&#x${parseInt(value).toString(16)};`
           })
-          this.tips = '点击复制icon代码'
-        },
-        fail: () => {
-          alert('链接错误或跨域，跨域时请使用「注入解析」功能')
-        }
-      })
-    },
-
-    // 解析 JS 文件
-    getOnlineJS() {
-      // 远程获取文件
-      this.isSymbol = true;
-      this.ajax({
-        url: this.url,
-        success: (params) => {
-          let $script = document.createElement('script')
-          $script.src = this.url
-          document.body.append($script);
-          // console.log(params)
-
-          //id="iconexchange"
-          params.replace(/id="([^"]+)"/gi, (...item) => {
-            this.iconList.push({
-              show: item[1].replace(/icon/, ''),
-              name: item[1].replace(/icon/, ''),
-              value: `#${item[1]}`,
-            })
-          })
-          this.tips = '点击复制icon代码'
-        },
-        fail: () => {
-          alert('链接错误或跨域，跨域时请使用「注入解析」功能')
-        }
-      })
-    },
-
-    // 打开所有副本
-    showAll() {
-      this.parseIcon(this.bufferStr, true)
-    },
-
-    // 解析icon
-    async parseIcon(bufferStr, showAll, isWoff2) {
-      this.bufferStr = bufferStr
-      this.iconList = []
-      const bufferAfterDecode = isWoff2 ? Uint8Array.from(WOFF2_DECODE.decompress(this.bufferStr)).buffer : this.bufferStr;
-      let result = window.opentype.parse(bufferAfterDecode);
-      for (let key in result.glyphs.glyphs) {
-        let item = result.glyphs.glyphs[key]
-        if (!item.unicode) {
-        } else if (showAll) { // 是否显示所有 unicodes
-          let valueStr = ''
-          item.unicodes.forEach(unicode => valueStr += `&#${unicode};\n`)
-          this.iconList.push({
-            name: item.name,
-            value: valueStr,
-            show: `&#${item.unicode};`
-          })
-        } else {
-          this.iconList.push({
-            name: item.name,
-            show: `&#${item.unicode};`,
-            value: `&#${item.unicode};`
-          })
-        }
-      }
-      this.iconList.forEach(item => {
-        item.value = item.value.replace(/&#([^;]+);/ig, (target, value) => {
-          return `&#x${parseInt(value).toString(16)};`
         })
-      })
-      this.tips = '点击复制icon代码'
-    },
+        this.tips = '点击复制icon代码'
+      },
 
-    // 添加style
-    setStyle(url, cssFile) {
-      let $style = document.createElement('style')
-      if (cssFile) {
-        $style.innerHTML = cssFile
-      } else {
-        $style.innerHTML = `
+      // 添加style
+      setStyle(url, cssFile) {
+        let $style = document.createElement('style')
+        if (cssFile) {
+          $style.innerHTML = cssFile
+        } else {
+          $style.innerHTML = `
         @font-face {
   font-family: 'iconfont';
   src: url('${url}') format('truetype');
@@ -486,42 +550,43 @@ new Vue({
   -webkit-text-stroke-width: 0.2px;
   -moz-osx-font-smoothing: grayscale;
 }`;
+        }
+
+        document.body.append($style);
+      },
+
+      // 拷贝剪切板
+      copyToClipboard(content) {
+        clearTimeout(this.timeouter)
+        this.tips = `复制成功: ${content}`
+        this.timeouter = setTimeout(() => { this.tips = `点击复制icon代码` }, 1000)
+
+        if (!document.queryCommandSupported('copy')) {
+          return false
+        }
+
+        let $input = document.createElement('input')
+        $input.style.opacity = '0'
+        $input.value = content
+        document.body.appendChild($input)
+        $input.select()
+
+        const result = document.execCommand('copy')
+        document.body.removeChild($input)
+        $input = null
+
+        return result
+      },
+
+      // 页面重新加载
+      reload() {
+        const urlObj = new URL(location.href)
+        urlObj.searchParams.delete('source')
+        location.href = urlObj.href
       }
-
-      document.body.append($style);
-    },
-
-    // 拷贝剪切板
-    copyToClipboard(content) {
-      clearTimeout(this.timeouter)
-      this.tips = `复制成功: ${content}`
-      this.timeouter = setTimeout(() => {this.tips = `点击复制icon代码`}, 1000)
-
-      if (!document.queryCommandSupported('copy')) {
-        return false
-      }
-
-      let $input = document.createElement('input')
-      $input.style.opacity = '0'
-      $input.value = content
-      document.body.appendChild($input)
-      $input.select()
-
-      const result = document.execCommand('copy')
-      document.body.removeChild($input)
-      $input = null
-
-      return result
-    },
-
-    // 页面重新加载
-    reload() {
-      const urlObj = new URL(location.href)
-      urlObj.searchParams.delete('source')
-      location.href = urlObj.href
     }
-  }
-})
-// script注入
+  })
+  // script注入
 </script>
+
 </html>
