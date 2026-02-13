@@ -11,8 +11,97 @@ const PORT = 3456;
 const PUBLIC_URL = 'https://10.224.150.102:8766/index.html';
 const FONT_EXTENSIONS = ['.ttf', '.woff', '.woff2', '.otf', '.eot'];
 
-// 获取命令行参数中的扫描路径，默认为当前工作目录
-const scanPath = process.argv[2] || process.cwd();
+/**
+ * 解析命令行参数
+ * @returns {object} 解析后的参数对象
+ */
+function parseArgs() {
+  const args = process.argv.slice(2);
+  const options = {
+    path: process.cwd(),
+    help: false
+  };
+  
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    
+    if (arg === '-h' || arg === '--help') {
+      options.help = true;
+    } else if (arg === '-p' || arg === '--path') {
+      // 获取 -p 后面的路径参数
+      if (i + 1 < args.length && !args[i + 1].startsWith('-')) {
+        options.path = path.resolve(args[i + 1]);
+        i++; // 跳过下一个参数
+      } else {
+        console.error('错误: -p 参数需要指定一个路径');
+        process.exit(1);
+      }
+    } else if (!arg.startsWith('-')) {
+      // 兼容旧的位置参数方式（直接传路径）
+      options.path = path.resolve(arg);
+    } else {
+      console.error(`错误: 未知参数 "${arg}"`);
+      console.log('使用 -h 或 --help 查看帮助信息');
+      process.exit(1);
+    }
+  }
+  
+  return options;
+}
+
+/**
+ * 显示帮助信息
+ */
+function showHelp() {
+  console.log(`
+Iconfont Preview - 本地字体文件扫描服务
+
+用法:
+  node font-searcher.js [选项] [路径]
+
+选项:
+  -p, --path <路径>    指定要扫描的目录路径
+  -h, --help           显示此帮助信息
+
+示例:
+  node font-searcher.js                      # 扫描当前目录
+  node font-searcher.js ./fonts              # 扫描 ./fonts 目录（位置参数方式）
+  node font-searcher.js -p ./fonts           # 扫描 ./fonts 目录
+  node font-searcher.js -p "C:\\Users\\fonts" # 扫描指定的绝对路径
+
+说明:
+  启动后会自动扫描指定目录下的字体文件（.ttf, .woff, .woff2, .otf, .eot），
+  并启动本地 HTTP 服务器提供 API 接口，同时自动打开浏览器预览页面。
+
+API 接口:
+  /api/fonts           获取字体文件列表
+  /api/font?path=xxx   获取指定字体文件内容
+  /api/health          健康检查
+
+按 Ctrl+C 停止服务器。
+`);
+}
+
+// 解析命令行参数
+const options = parseArgs();
+
+// 显示帮助信息
+if (options.help) {
+  showHelp();
+  process.exit(0);
+}
+
+// 检查扫描路径是否存在
+const scanPath = options.path;
+if (!fs.existsSync(scanPath)) {
+  console.error(`错误: 指定的路径不存在: ${scanPath}`);
+  process.exit(1);
+}
+
+if (!fs.statSync(scanPath).isDirectory()) {
+  console.error(`错误: 指定的路径不是一个目录: ${scanPath}`);
+  process.exit(1);
+}
 
 /**
  * 深度遍历目录，查找字体文件

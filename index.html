@@ -223,7 +223,7 @@
     }
 
     .p-github {
-      bottom: 140px;
+      bottom: 150px;
     }
 
     /* 功能区域容器 */
@@ -664,7 +664,7 @@
 
     .p-icon-item {
       margin: 8px;
-      padding: 4px 0px 8px;
+      padding: 4px 4px 8px;
       display: inline-block;
       text-align: center;
       border-radius: 12px;
@@ -690,17 +690,30 @@
     }
 
     .p-icon-item:hover {
-      background: #ffffff;
-      border-color: #3D8AC7;
-      box-shadow: 0 8px 25px rgba(61, 138, 199, 0.2);
-      transform: translateY(-5px);
+      border-color: #d0e3f0;
+      background: linear-gradient(135deg, #f8fbff 0%, #f0f7ff 100%);
+      box-shadow: 0 4px 12px rgba(61, 138, 199, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .p-icon-item:hover .name {
+      color: #3D8AC7;
+    }
+
+    .p-icon-item:hover .iconfont,
+    .p-icon-item:hover svg {
+      transform: scale(1.08);
     }
 
     .p-icon-item:active {
-      color: white;
-      background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
-      border-color: transparent;
+      border-color: #3D8AC7;
+      background: linear-gradient(135deg, #e8f4fc 0%, #d6ebf8 100%);
+      box-shadow: 0 2px 6px rgba(61, 138, 199, 0.15);
       transform: translateY(0);
+    }
+
+    .p-icon-item:active .name {
+      color: #2a6fa8;
     }
 
     .p-icon-item .iconfont {
@@ -708,6 +721,7 @@
       padding: 4px;
       border-radius: 8px;
       font-size: 32px;
+      transition: transform 0.2s ease;
     }
 
     .p-icon-item .name {
@@ -715,6 +729,7 @@
       font-weight: bolder;
       color: #333;
       margin-top: 8px;
+      transition: color 0.2s ease;
     }
 
     .p-icon-item .value {
@@ -728,6 +743,7 @@
     .p-icon-item svg {
       width: 40px;
       height: 40px;
+      transition: transform 0.2s ease;
     }
 
     /* 响应式调整 */
@@ -970,6 +986,7 @@
         isSymbol: false, // 是否 symbol 模式
         isCSS: false, // 是否 css 文件链接
         iconList: [], // icon 列表
+        showAllUnicodes: false, // 是否显示所有副本 unicode
         
         // 本地字体扫描相关
         hostApi: '', // 本地 API 地址（从 host 参数获取）
@@ -993,8 +1010,24 @@
       }
     },
 
+    // 监听配置变化，自动保存到 localStorage
+    watch: {
+      copyType(newVal) {
+        this.saveSettings();
+      },
+      backgroundIndex(newVal) {
+        this.saveSettings();
+      },
+      showAllUnicodes(newVal) {
+        this.saveSettings();
+      }
+    },
+
     // 获取链接中携带的资源链接
     created() {
+      // 从 localStorage 恢复用户配置
+      this.loadSettings();
+      
       const urlObj = new URL(location.href)
       
       // 检查 host 参数
@@ -1317,6 +1350,49 @@
         const sizes = ['B', 'KB', 'MB', 'GB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      },
+
+      // ===== 配置缓存相关方法 =====
+      
+      // 保存用户配置到 localStorage
+      saveSettings() {
+        try {
+          const settings = {
+            copyType: this.copyType,
+            backgroundIndex: this.backgroundIndex,
+            showAllUnicodes: this.showAllUnicodes
+          };
+          localStorage.setItem('iconfont-preview-settings', JSON.stringify(settings));
+        } catch (e) {
+          console.warn('保存配置失败:', e);
+        }
+      },
+
+      // 从 localStorage 读取用户配置
+      loadSettings() {
+        try {
+          const settingsStr = localStorage.getItem('iconfont-preview-settings');
+          if (settingsStr) {
+            const settings = JSON.parse(settingsStr);
+            
+            // 恢复 copyType
+            if (settings.copyType && ['value', 'name'].includes(settings.copyType)) {
+              this.copyType = settings.copyType;
+            }
+            
+            // 恢复 backgroundIndex
+            if (typeof settings.backgroundIndex === 'number' && settings.backgroundIndex >= 0 && settings.backgroundIndex <= 2) {
+              this.backgroundIndex = settings.backgroundIndex;
+            }
+            
+            // 恢复 showAllUnicodes
+            if (typeof settings.showAllUnicodes === 'boolean') {
+              this.showAllUnicodes = settings.showAllUnicodes;
+            }
+          }
+        } catch (e) {
+          console.warn('读取配置失败:', e);
+        }
       }
     }
   })
