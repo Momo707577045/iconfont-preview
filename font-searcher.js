@@ -7,8 +7,7 @@ const { exec } = require('child_process');
 
 // 配置
 const PORT = 3456;
-// const PUBLIC_URL = 'https://blog.luckly-mjw.cn/tool-show/iconfont-preview/index.html';
-const PUBLIC_URL = 'https://10.224.150.102:8766/index.html';
+const PUBLIC_URL = 'https://blog.luckly-mjw.cn/tool-show/iconfont-preview/index.html';
 const FONT_EXTENSIONS = ['.ttf', '.woff', '.woff2', '.otf', '.eot'];
 
 /**
