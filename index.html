@@ -10,6 +10,18 @@
   <title>Iconfont Preview</title>
   <style>
     /*全局设置*/
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      /* background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%); */
+      background: white;
+      min-height: 100vh;
+      margin: 0;
+    }
+
     body::-webkit-scrollbar {
       display: none
     }
@@ -22,18 +34,21 @@
       display: none;
     }
 
-    #app {
-      text-align: center;
-      padding: 10px 50px 80px;
+    #iconfont-preview {
+      padding: 20px 50px 100px;
+      max-width: 1400px;
+      margin: 0 auto;
     }
 
     .p-action {
-      margin: 20px auto;
+      margin: 20px auto 30px;
       max-width: 1100px;
       width: 100%;
-      font-size: 35px;
+      font-size: 32px;
       text-align: center;
-      font-weight: bold;
+      font-weight: 700;
+      color: #2c3e50;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
     }
 
     .p-reset,
@@ -43,22 +58,25 @@
       position: absolute;
       top: 38px;
       right: 100px;
-      padding: 8px 20px;
-      font-size: 20px;
+      padding: 10px 24px;
+      font-size: 16px;
       color: white;
       cursor: pointer;
-      border-radius: 4px;
-      border: 1px solid #aaaaaa;
-      background-color: #3D8AC7;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(135deg, #3D8AC7 0%, #2980b9 100%);
+      box-shadow: 0 4px 15px rgba(61, 138, 199, 0.3);
       opacity: 1;
-      transition: 0.3s all;
+      transition: all 0.3s ease;
+      font-weight: 500;
     }
 
     .p-reset:hover,
     .p-copy-type:hover,
     .p-change-background:hover,
     .p-show-all:hover {
-      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(61, 138, 199, 0.4);
     }
 
     .p-copy-type {
@@ -77,73 +95,470 @@
 
     .p-github,
     .p-tamper,
-    .p-other {
+    .p-other,
+    .p-node-script {
       position: fixed;
       right: 50px;
       bottom: 70px;
-      background-color: #eff3f6;
-      background-image: linear-gradient(-180deg, #fafbfc, #eff3f6 90%);
+      background: white;
       color: #24292e;
-      border: 1px solid rgba(27, 31, 35, .2);
-      border-radius: 3px;
+      border: 1px solid rgba(27, 31, 35, .15);
+      border-radius: 8px;
       cursor: pointer;
       display: inline-block;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       line-height: 20px;
-      padding: 6px 12px;
+      padding: 8px 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      z-index: 2;
+    }
+
+    .p-github:hover,
+    .p-tamper:hover,
+    .p-other:hover,
+    .p-node-script:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      border-color: #3D8AC7;
+      color: #3D8AC7;
+    }
+
+    .p-node-script {
+      background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+      color: white !important;
+      border: none;
+      text-decoration: none;
+    }
+
+    .p-node-script:hover {
+      color: white !important;
+      border: none;
+      box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+      transform: translateY(-2px);
+    }
+
+    /* 悬浮提示样式 */
+    .p-tooltip {
+      position: relative;
+    }
+
+    .p-tooltip::before {
+      content: attr(data-tooltip);
+      position: absolute;
+      right: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      margin-right: 12px;
+      padding: 10px 14px;
+      background: #333;
+      color: white;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.5;
+      border-radius: 8px;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      z-index: 100;
+    }
+
+    .p-tooltip::after {
+      content: '';
+      position: absolute;
+      right: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      margin-right: 4px;
+      border: 6px solid transparent;
+      border-left-color: #333;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .p-tooltip:hover::before,
+    .p-tooltip:hover::after {
+      opacity: 1;
+      visibility: visible;
     }
 
     .p-help {
       position: fixed;
       right: 50px;
       top: 50px;
-      width: 30px;
-      height: 30px;
+      width: 36px;
+      height: 36px;
       color: #666666;
       z-index: 2;
-      line-height: 30px;
+      line-height: 36px;
       font-weight: bolder;
       border-radius: 50%;
-      border: 1px solid rgba(27, 31, 35, .2);
+      border: 1px solid rgba(27, 31, 35, .15);
       cursor: pointer;
       text-align: center;
-      background-color: #eff3f6;
-      background-image: linear-gradient(-180deg, #fafbfc, #eff3f6 90%);
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
     }
 
-    .p-github:hover,
-    .p-tamper:hover,
-    .p-other:hover,
-    .p-help {
-      opacity: 0.9;
+    .p-help:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
 
-    .p-other {
+    .p-node-script {
       bottom: 30px;
     }
 
-    .p-tamper {
+    .p-other {
       bottom: 70px;
     }
 
-    .p-github {
+    .p-tamper {
       bottom: 110px;
+    }
+
+    .p-github {
+      bottom: 140px;
+    }
+
+    /* 功能区域容器 */
+    .p-section-container {
+      margin: 20px auto;
+      max-width: 1100px;
+      padding: 28px;
+      border: none;
+      border-radius: 16px;
+      background: white;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .p-section-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .p-section-title svg {
+      margin-right: 10px;
+      color: #3D8AC7;
+    }
+
+    .p-section-title .badge {
+      margin-left: 10px;
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-weight: 500;
+    }
+
+    /* 本地字体选择器样式 */
+    .p-local-fonts-container {
+      margin: 20px auto;
+      max-width: 1100px;
+      padding: 28px;
+      border: none;
+      border-radius: 16px;
+      background: white;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .p-local-fonts-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .p-local-fonts-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      display: flex;
+      align-items: center;
+    }
+
+    .p-local-fonts-title svg {
+      margin-right: 12px;
+      color: #3D8AC7;
+    }
+
+    .p-local-fonts-title .local-badge {
+      margin-left: 12px;
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      color: white;
+      font-weight: 500;
+    }
+
+    .p-local-fonts-status {
+      font-size: 13px;
+      color: #666;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background-color: #f0f0f0;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .p-local-fonts-status.connected {
+      background: linear-gradient(135deg, #e6f7e6 0%, #c8f7c5 100%);
+      color: #2e7d32;
+    }
+
+    .p-local-fonts-status.error {
+      background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+      color: #c62828;
+    }
+
+    .p-local-fonts-list {
+      max-height: 280px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+      padding: 5px;
+    }
+
+    .p-local-fonts-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .p-local-fonts-list::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+
+    .p-local-fonts-list::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 3px;
+    }
+
+    .p-local-fonts-list::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
+
+    .p-font-item {
+      display: flex;
+      align-items: center;
+      padding: 14px 18px;
+      margin: 10px 0;
+      background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+      border: 2px solid transparent;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .p-font-item:hover {
+      border-color: #3D8AC7;
+      background: white;
+      box-shadow: 0 4px 15px rgba(61, 138, 199, 0.15);
+      transform: translateX(5px);
+    }
+
+    .p-font-item.selected {
+      border-color: #3D8AC7;
+      background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+      box-shadow: 0 4px 15px rgba(61, 138, 199, 0.2);
+    }
+
+    .p-font-item input[type="radio"] {
+      margin-right: 14px;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: #3D8AC7;
+    }
+
+    .p-font-item-info {
+      flex: 1;
+      text-align: left;
+    }
+
+    .p-font-item-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .p-font-item-path {
+      font-size: 12px;
+      color: #888;
+      margin-top: 4px;
+      font-family: 'Monaco', 'Menlo', monospace;
+    }
+
+    .p-font-item-size {
+      font-size: 12px;
+      color: #666;
+      background: white;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-weight: 500;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .p-local-fonts-actions {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .p-local-fonts-btn {
+      padding: 14px 36px;
+      font-size: 15px;
+      color: white;
+      cursor: pointer;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, #3D8AC7 0%, #2980b9 100%);
+      box-shadow: 0 4px 15px rgba(61, 138, 199, 0.3);
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+
+    .p-local-fonts-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(61, 138, 199, 0.4);
+    }
+
+    .p-local-fonts-btn:disabled {
+      background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .p-local-fonts-btn.secondary {
+      background: white;
+      color: #666;
+      border: 2px solid #e0e0e0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .p-local-fonts-btn.secondary:hover {
+      border-color: #3D8AC7;
+      color: #3D8AC7;
+      background: #f8fbff;
+    }
+
+    .p-local-fonts-empty {
+      text-align: center;
+      padding: 50px 20px;
+      color: #888;
+    }
+
+    .p-local-fonts-empty p {
+      margin-bottom: 10px;
+    }
+
+    .p-local-fonts-loading {
+      text-align: center;
+      padding: 50px 20px;
+      color: #666;
+    }
+
+    .p-local-fonts-loading .spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3D8AC7;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 15px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .p-scan-path {
+      font-size: 12px;
+      color: #999;
+      margin-top: 15px;
+      word-break: break-all;
+      text-align: center;
+      font-family: 'Monaco', 'Menlo', monospace;
+      background: #f8f8f8;
+      padding: 8px 15px;
+      border-radius: 6px;
+    }
+
+    /* 分隔线样式 */
+    .p-divider {
+      display: flex;
+      align-items: center;
+      margin: 30px auto;
+      max-width: 1100px;
+    }
+
+    .p-divider::before,
+    .p-divider::after {
+      content: '';
+      flex: 1;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
+    }
+
+    .p-divider-text {
+      padding: 0 20px;
+      color: #999;
+      font-size: 14px;
+      font-weight: 500;
     }
 
     /*字体文件载入*/
     .p-input-container {
-      padding-top: 50px;
+      margin: 20px auto;
+      max-width: 1100px;
+      padding: 28px;
+      border: none;
+      border-radius: 16px;
+      background: white;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .p-input-container .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .p-input-container .section-header svg {
+      margin-right: 10px;
+      color: #e74c3c;
     }
 
     .p-input-container .line {
       vertical-align: top;
       width: 100%;
-      height: 6px;
-      margin: 30px 0;
-      transform-origin: top;
-      background-repeat: repeat;
-      background-image: url(https://upyun.luckly-mjw.cn/Assets/base-source/icon-dotted-x.png);
+      height: 2px;
+      margin: 25px 0;
+      background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
     }
 
     .p-input-container .url-box,
@@ -156,16 +571,27 @@
     }
 
     .p-input-container .url-box input {
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       display: block;
       width: 100%;
-      padding: 10px;
-      font-size: 24px;
-      border-radius: 4px;
-      box-shadow: none;
-      color: #444444;
-      border: 1px solid #cccccc;
-      box-sizing: border-box;
+      padding: 16px 20px;
+      font-size: 16px;
+      border-radius: 12px;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+      color: #333;
+      border: 2px solid #e0e0e0;
+      transition: all 0.3s ease;
+      font-family: 'Monaco', 'Menlo', monospace;
+    }
+
+    .p-input-container .url-box input:focus {
+      outline: none;
+      border-color: #3D8AC7;
+      box-shadow: 0 0 0 4px rgba(61, 138, 199, 0.1);
+    }
+
+    .p-input-container .url-box input::placeholder {
+      color: #aaa;
     }
 
     .p-input-container .input-box,
@@ -173,22 +599,33 @@
       position: relative;
       display: inline-block;
       width: 100%;
-      line-height: 50px;
+      line-height: 1.5;
       box-sizing: border-box;
-      padding: 10px 30px;
-      font-size: 30px;
+      padding: 18px 30px;
+      font-size: 16px;
       color: white;
       cursor: pointer;
-      border-radius: 4px;
-      border: 1px solid #aaaaaa;
-      background-color: #3D8AC7;
-      opacity: 1;
-      transition: 0.3s all;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #3D8AC7 0%, #2980b9 100%);
+      box-shadow: 0 4px 15px rgba(61, 138, 199, 0.3);
+      transition: all 0.3s ease;
+      font-weight: 600;
     }
 
     .p-input-container .input-box:hover,
     .url-box div:hover {
-      opacity: 0.9;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(61, 138, 199, 0.4);
+    }
+
+    .p-input-container .input-box {
+      background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+      box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+    }
+
+    .p-input-container .input-box:hover {
+      box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
     }
 
     .p-input-container .input-box input {
@@ -205,20 +642,39 @@
       width: 100%;
     }
 
+    /* 社区信息样式 */
+    .m-p-tips {
+      margin: 20px auto;
+      max-width: 1100px;
+      background: white !important;
+      border: none !important;
+      border-radius: 16px !important;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08) !important;
+      padding: 30px !important;
+    }
+
     /*icon 列表样式*/
+    .p-icons-container {
+      margin: 20px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
     .p-icon-item {
-      margin: 6px;
-      padding: 10px 6px;
+      margin: 8px;
+      padding: 4px 0px 8px;
       display: inline-block;
       text-align: center;
-      border-radius: 4px;
+      border-radius: 12px;
       cursor: pointer;
-      border: 1px solid #dddddd;
+      border: 2px solid #f0f0f0;
       overflow: hidden;
       white-space: pre-line;
       box-sizing: border-box;
-      transition-duration: .4s;
-      transition-property: background, box-shadow;
+      transition: all 0.3s ease;
+      min-width: 100px;
     }
 
     .p-icon-item-background-0 {
@@ -230,45 +686,116 @@
     }
 
     .p-icon-item-background-2 {
-      background-color: #EBEBEB;
+      background-color: #f5f5f5;
     }
 
     .p-icon-item:hover {
       background: #ffffff;
-      border-color: transparent;
-      box-shadow: 0 5px 18px 0 rgba(0, 0, 0, 0.3);
+      border-color: #3D8AC7;
+      box-shadow: 0 8px 25px rgba(61, 138, 199, 0.2);
+      transform: translateY(-5px);
     }
 
     .p-icon-item:active {
       color: white;
-      background: #7BD784;
+      background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+      border-color: transparent;
+      transform: translateY(0);
     }
 
     .p-icon-item .iconfont {
       margin: 0 20px;
-      padding: 6px;
-      border-radius: 4px;
-      font-size: 28px;
+      padding: 4px;
+      border-radius: 8px;
+      font-size: 32px;
     }
 
     .p-icon-item .name {
-      font-size: 12px;
-      font-weight: bold;
+      font-size: 14px;
+      font-weight: bolder;
+      color: #333;
+      margin-top: 8px;
     }
 
     .p-icon-item .value {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: bold;
+      color: #888;
+      margin-top: 4px;
+      font-family: 'Monaco', 'Menlo', monospace;
     }
 
     .p-icon-item svg {
-      width: 36px;
-      height: 36px;
+      width: 40px;
+      height: 40px;
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+      #iconfont-preview {
+        padding: 15px 20px 80px;
+      }
+
+      .p-action {
+        font-size: 24px;
+      }
+
+      .p-local-fonts-container,
+      .p-input-container,
+      .m-p-tips {
+        padding: 20px !important;
+        margin: 15px auto;
+      }
+
+      .p-local-fonts-header {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+      }
+
+      .p-local-fonts-title {
+        justify-content: center;
+      }
+
+      .p-font-item {
+        flex-wrap: wrap;
+      }
+
+      .p-font-item-size {
+        margin-top: 10px;
+        width: 100%;
+        text-align: center;
+      }
+
+      .p-local-fonts-actions {
+        flex-direction: column;
+      }
+
+      .p-local-fonts-btn {
+        width: 100%;
+      }
+
+      .p-copy-type,
+      .p-change-background,
+      .p-show-all,
+      .p-reset {
+        position: static;
+        display: block;
+        margin: 5px auto;
+        width: 80%;
+      }
     }
   </style>
 </head>
 
 <body>
+  <!-- 固定按钮组 - 放在 Vue 实例外部 -->
+  <a class="p-help" target="_blank" href="https://segmentfault.com/a/1190000020121850">?</a>
+  <a class="p-node-script" title="下载 Node 脚本，本地运行后可扫描字体文件" href="javascript:void(0)" onclick="downloadNodeScript()">📦 Node 扫描脚本</a>
+  <a class="p-tamper" target="_blank" href="https://blog.luckly-mjw.cn/tool-show/iconfont-preview/iconfont-preview.user.js">添加油猴插件</a>
+  <a class="p-github" target="_blank" href="https://github.com/Momo707577045/iconfont-preview">github</a>
+  <a class="p-other" target="_blank" href="http://blog.luckly-mjw.cn/tool-show/index.html">其他实用工具</a>
+
   <section id="iconfont-preview" v-cloak>
     <!--顶部操作提示-->
     <section class="p-action g-box">{{tips}}</section>
@@ -276,11 +803,73 @@
     <div v-if="iconList.length > 0" class="p-change-background" @click="backgroundIndex = (backgroundIndex + 1) % 3">切换背景</div>
     <div v-if="iconList.length > 0 && bufferStr" class="p-show-all" @click="showAll">显示副本 unicode</div>
     <div v-if="iconList.length > 0" class="p-reset" @click="reload">重新载入</div>
-    <a class="p-help" target="_blank" href="https://segmentfault.com/a/1190000020121850">?</a>
-    <a class="p-tamper" target="_blank" href="https://blog.luckly-mjw.cn/tool-show/iconfont-preview/iconfont-preview.user.js">添加油猴插件</a>
-    <a class="p-github" target="_blank" href="https://github.com/Momo707577045/iconfont-preview">github</a>
-    <a class="p-other" target="_blank" href="http://blog.luckly-mjw.cn/tool-show/index.html">其他实用工具</a>
-    <!--文件载入-->
+    <!--本地字体选择器（通过 host 参数激活）-->
+    <section class="p-local-fonts-container" v-if="iconList.length === 0 && hostApi">
+      <div class="p-local-fonts-header">
+        <div class="p-local-fonts-title">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1Z"></path>
+            <path d="M14 8H8"></path>
+            <path d="M16 12H8"></path>
+            <path d="M13 16H8"></path>
+          </svg>
+          本地字体文件扫描
+        </div>
+        <span class="p-local-fonts-status" :class="{ connected: localFontsConnected, error: localFontsError }">
+          {{ localFontsStatus }}
+        </span>
+      </div>
+      
+      <!-- 加载中 -->
+      <div class="p-local-fonts-loading" v-if="localFontsLoading">
+        <div class="spinner"></div>
+        <div>正在扫描本地字体文件...</div>
+      </div>
+      
+      <!-- 错误状态 -->
+      <div class="p-local-fonts-empty" v-else-if="localFontsError">
+        <p style="color: #c62828; margin-bottom: 15px;">{{ localFontsErrorMsg }}</p>
+        <button class="p-local-fonts-btn secondary" @click="fetchLocalFonts">重试连接</button>
+      </div>
+      
+      <!-- 空列表 -->
+      <div class="p-local-fonts-empty" v-else-if="localFonts.length === 0 && localFontsConnected">
+        <p>未在扫描目录中找到字体文件</p>
+        <p class="p-scan-path">扫描路径: {{ localFontsScanPath }}</p>
+      </div>
+      
+      <!-- 字体列表 -->
+      <template v-else-if="localFonts.length > 0">
+        <div class="p-local-fonts-list">
+          <div 
+            v-for="(font, index) in localFonts" 
+            :key="index"
+            class="p-font-item" 
+            :class="{ selected: selectedLocalFont === font.relativePath }"
+            @click="selectedLocalFont = font.relativePath"
+          >
+            <input 
+              type="radio" 
+              :value="font.relativePath" 
+              v-model="selectedLocalFont"
+              @click.stop
+            >
+            <div class="p-font-item-info">
+              <div class="p-font-item-name">{{ font.name }}</div>
+              <div class="p-font-item-path">{{ font.relativePath }}</div>
+            </div>
+            <span class="p-font-item-size">{{ formatFileSize(font.size) }}</span>
+          </div>
+        </div>
+        <p class="p-scan-path">扫描路径: {{ localFontsScanPath }}</p>
+        <div class="p-local-fonts-actions">
+          <button class="p-local-fonts-btn secondary" @click="fetchLocalFonts">刷新列表</button>
+          <button class="p-local-fonts-btn" :disabled="!selectedLocalFont" @click="loadSelectedFont">加载选中字体</button>
+        </div>
+      </template>
+    </section>
+    
+    <!--文件载入（始终显示）-->
     <section class="p-input-container" v-if="iconList.length === 0">
       <div class="url-box">
         <input type="text" v-model="url" placeholder="在线 ttf、woff、woff2、css 或 js 链接" v-on:keyup.enter="getURLFile">
@@ -335,6 +924,35 @@
 <!--ttf文件解析库-->
 <script src="https://upyun.luckly-mjw.cn/lib/opentype.min.js"></script>
 <script>
+  // Node.js 扫描脚本下载函数
+  function downloadNodeScript() {
+    const scriptUrl = 'https://blog.luckly-mjw.cn/tool-show/iconfont-preview/font-searcher.js';
+    
+    fetch(scriptUrl)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('网络请求失败: ' + response.status);
+        }
+        return response.blob();
+      })
+      .then(blob => {
+        // 创建下载链接
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'font-searcher.js';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      })
+      .catch(error => {
+        alert('下载失败: ' + error.message);
+        console.error('下载脚本失败:', error);
+      });
+  }
+</script>
+<script>
   // script注入
   const WOFF2_DECODE = Module
 
@@ -352,12 +970,43 @@
         isSymbol: false, // 是否 symbol 模式
         isCSS: false, // 是否 css 文件链接
         iconList: [], // icon 列表
+        
+        // 本地字体扫描相关
+        hostApi: '', // 本地 API 地址（从 host 参数获取）
+        localFonts: [], // 本地字体文件列表
+        localFontsLoading: false, // 加载状态
+        localFontsConnected: false, // 连接状态
+        localFontsError: false, // 错误状态
+        localFontsErrorMsg: '', // 错误信息
+        localFontsScanPath: '', // 扫描路径
+        selectedLocalFont: '', // 选中的字体文件路径
+      }
+    },
+
+    computed: {
+      // 本地字体连接状态文字
+      localFontsStatus() {
+        if (this.localFontsLoading) return '连接中...';
+        if (this.localFontsError) return '连接失败';
+        if (this.localFontsConnected) return `已连接 (${this.localFonts.length} 个字体)`;
+        return '未连接';
       }
     },
 
     // 获取链接中携带的资源链接
     created() {
       const urlObj = new URL(location.href)
+      
+      // 检查 host 参数
+      const host = urlObj.searchParams.get('host')
+      if (host) {
+        this.hostApi = decodeURIComponent(host)
+        this.tips = '本地字体扫描模式'
+        this.fetchLocalFonts()
+        return
+      }
+      
+      // 原有逻辑：检查 source 参数
       const url = urlObj.searchParams.get('source')
       if (url) {
         this.url = decodeURIComponent(url)
@@ -584,6 +1233,90 @@
         const urlObj = new URL(location.href)
         urlObj.searchParams.delete('source')
         location.href = urlObj.href
+      },
+
+      // ===== 本地字体扫描相关方法 =====
+      
+      // 获取本地字体文件列表
+      fetchLocalFonts() {
+        if (!this.hostApi) return;
+        
+        this.localFontsLoading = true;
+        this.localFontsError = false;
+        this.localFontsErrorMsg = '';
+        this.localFontsConnected = false;
+        
+        const apiUrl = `${this.hostApi}/api/fonts`;
+        
+        fetch(apiUrl)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(data => {
+            this.localFontsLoading = false;
+            this.localFontsConnected = true;
+            this.localFonts = data.fonts || [];
+            this.localFontsScanPath = data.scanPath || '';
+            this.tips = `已扫描到 ${this.localFonts.length} 个字体文件`;
+            
+            // 如果只有一个字体，自动选中
+            if (this.localFonts.length === 1) {
+              this.selectedLocalFont = this.localFonts[0].relativePath;
+            }
+          })
+          .catch(error => {
+            this.localFontsLoading = false;
+            this.localFontsError = true;
+            this.localFontsErrorMsg = `无法连接到本地服务器: ${error.message}。请确保已运行 node index.js 脚本。`;
+            this.tips = '连接本地服务器失败';
+            console.error('获取本地字体列表失败:', error);
+          });
+      },
+
+      // 加载选中的本地字体
+      loadSelectedFont() {
+        if (!this.selectedLocalFont || !this.hostApi) return;
+        
+        this.tips = '正在加载字体文件...';
+        
+        // 构建字体文件 URL
+        const fontUrl = `${this.hostApi}/api/font?path=${encodeURIComponent(this.selectedLocalFont)}`;
+        
+        // 使用 fetch 获取字体文件的 ArrayBuffer
+        fetch(fontUrl)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.arrayBuffer();
+          })
+          .then(buffer => {
+            // 判断是否为 woff2 格式
+            const isWoff2 = /\.woff2$/i.test(this.selectedLocalFont);
+            
+            // 解析字体图标
+            this.parseIcon(buffer, false, isWoff2);
+            
+            // 设置 @font-face 样式
+            this.setStyle(fontUrl);
+          })
+          .catch(error => {
+            alert(`加载字体文件失败: ${error.message}`);
+            this.tips = '加载字体文件失败';
+            console.error('加载字体文件失败:', error);
+          });
+      },
+
+      // 格式化文件大小
+      formatFileSize(bytes) {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
       }
     }
   })
